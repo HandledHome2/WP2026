@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handled Home Service Pro — Pricing Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1C2C;
+    --navy-mid: #132539;
+    --navy-light: #1C3350;
+    --gold: #C9972B;
+    --gold-light: #E4B84A;
+    --gold-pale: #F5E6C0;
+    --white: #F7F5F0;
+    --muted: #8DA0B3;
+    --border: rgba(201,151,43,0.2);
+    --card: rgba(28,51,80,0.6);
+    --success: #3DAA6E;
+    --red: #C94040;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-icon {
+    width: 48px; height: 48px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--navy); letter-spacing: 1px;
+  }
+  .brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px; letter-spacing: 3px; color: var(--white);
+    line-height: 1;
+  }
+  .brand-sub { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+  .header-badge {
+    font-size: 11px; color: var(--gold); letter-spacing: 1px;
+    background: rgba(201,151,43,0.1); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 20px; text-align: right;
+  }
+  .header-badge strong { display: block; font-size: 13px; color: var(--gold-light); }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    background: var(--navy-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    overflow-x: auto;
+  }
+  .tab {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px; letter-spacing: 2px;
+    padding: 16px 24px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--white); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* LAYOUT */
+  .main { display: flex; min-height: calc(100vh - 120px); }
+  .form-panel { flex: 1; padding: 32px; overflow-y: auto; max-width: 680px; }
+  .quote-panel {
+    width: 380px; min-width: 340px;
+    background: var(--navy-mid);
+    border-left: 1px solid var(--border);
+    padding: 32px;
+    position: sticky; top: 0; height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  /* SECTION */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: 3px; color: var(--gold);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    display: block; width: 4px; height: 18px;
+    background: var(--gold); border-radius: 2px;
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: rgba(11,28,44,0.8);
+    border: 1px solid rgba(141,160,179,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(11,28,44,1);
+  }
+  .field select option { background: var(--navy-mid); }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* TOGGLE */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .toggle-label { font-size: 13px; color: var(--white); font-weight: 500; }
+  .toggle-label span { font-size: 11px; color: var(--muted); display: block; }
+  .toggle {
+    position: relative; width: 44px; height: 24px;
+    cursor: pointer;
+  }
+  .toggle input { display: none; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: rgba(141,160,179,0.2);
+    border-radius: 12px;
+    transition: background 0.2s;
+    border: 1px solid rgba(141,160,179,0.3);
+  }
+  .toggle input:checked ~ .toggle-track { background: var(--gold); border-color: var(--gold); }
+  .toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: var(--white); border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+  /* QUOTE PANEL */
+  .quote-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 3px; color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .quote-subtitle { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+
+  .quote-line {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(141,160,179,0.1);
+    font-size: 13px;
+  }
+  .quote-line:last-child { border-bottom: none; }
+  .quote-line .ql { color: var(--muted); max-width: 65%; line-height: 1.4; }
+  .quote-line .qv {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; color: var(--white);
+    font-weight: 500; text-align: right;
+  }
+  .quote-line.highlight .ql { color: var(--gold-pale); font-weight: 600; }
+  .quote-line.highlight .qv { color: var(--gold-light); }
+
+  .quote-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  .quote-total {
+    background: linear-gradient(135deg, rgba(201,151,43,0.15), rgba(201,151,43,0.05));
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  .qt-label { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .qt-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; letter-spacing: 2px; color: var(--white);
+    line-height: 1;
+  }
+  .qt-range { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .payment-split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;
+  }
+  .pay-box {
+    background: rgba(11,28,44,0.6);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; text-align: center;
+  }
+  .pay-box .pb-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .pay-box .pb-amount { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--gold-light); }
+
+  .generate-btn {
+    width: 100%; margin-top: 20px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: 3px;
+    border: none; border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .generate-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .reset-btn {
+    width: 100%; margin-top: 10px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; letter-spacing: 1px;
+    border: 1px solid rgba(141,160,179,0.2);
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { color: var(--white); border-color: var(--muted); }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 4px; margin-left: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+  .tag-add { background: rgba(61,170,110,0.15); color: var(--success); border: 1px solid rgba(61,170,110,0.3); }
+  .tag-warn { background: rgba(201,64,64,0.15); color: var(--red); border: 1px solid rgba(201,64,64,0.3); }
+
+  /* PAGE SECTIONS */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .client-section { margin-bottom: 24px; }
+  .client-section .section-title { font-size: 15px; }
+
+  /* PRINT / MODAL STYLES */
+  .quote-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .quote-modal-overlay.open { display: flex; }
+  .quote-modal {
+    background: #fff;
+    color: #1a1a1a;
+    width: 100%; max-width: 820px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+  .qm-header {
+    background: #0B1C2C;
+    color: #fff;
+    padding: 32px 40px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .qm-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: #E4B84A; }
+  .qm-brand-sub { font-size: 11px; color: #8DA0B3; letter-spacing: 2px; margin-top: 4px; }
+  .qm-contact { text-align: right; font-size: 12px; color: #8DA0B3; line-height: 1.8; }
+  .qm-contact strong { color: #E4B84A; }
+  .qm-body { padding: 40px; }
+  .qm-quote-meta {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 32px; margin-bottom: 32px;
+  }
+  .qm-meta-block { }
+  .qm-meta-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #8DA0B3; margin-bottom: 4px; }
+  .qm-meta-value { font-size: 14px; font-weight: 600; color: #0B1C2C; line-height: 1.5; }
+  .qm-divider { height: 2px; background: #C9972B; margin: 24px 0; border-radius: 2px; }
+  .qm-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px; color: #0B1C2C; margin-bottom: 16px; }
+  .qm-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .qm-table th {
+    background: #0B1C2C; color: #E4B84A;
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 10px 14px; text-align: left;
+  }
+  .qm-table td { padding: 10px 14px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .qm-table tr:last-child td { border-bottom: none; }
+  .qm-table tr:nth-child(even) td { background: #f9f7f4; }
+  .qm-total-row td { background: #f0e8d4 !important; font-weight: 700; font-size: 15px; color: #0B1C2C; }
+  .qm-payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .qm-pay-box {
+    border: 2px solid #C9972B; border-radius: 8px;
+    padding: 20px; text-align: center;
+  }
+  .qm-pay-label { font-size: 11px; color: #8DA0B3; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .qm-pay-amount { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #C9972B; }
+  .qm-disclaimer {
+    background: #f9f7f4; border-left: 4px solid #C9972B;
+    padding: 16px 20px; font-size: 12px; color: #555;
+    border-radius: 0 8px 8px 0; margin-bottom: 24px; line-height: 1.7;
+  }
+  .qm-sig { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .sig-line { border-top: 1px solid #333; padding-top: 8px; font-size: 12px; color: #555; }
+  .qm-page-break { page-break-before: always; padding-top: 40px; }
+  .qm-info-section { background: #f9f7f4; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  .qm-info-title { font-weight: 700; color: #0B1C2C; margin-bottom: 8px; font-size: 13px; }
+  .qm-info-list { list-style: none; }
+  .qm-info-list li { padding: 4px 0; border-bottom: 1px solid #eee; font-size: 12px; color: #333; padding-left: 16px; position: relative; }
+  .qm-info-list li::before { content: '→'; position: absolute; left: 0; color: #C9972B; }
+  .qm-close-btn {
+    position: fixed; top: 24px; right: 24px;
+    background: var(--gold); color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; letter-spacing: 2px;
+    border: none; border-radius: 8px;
+    padding: 10px 20px; cursor: pointer;
+    z-index: 1001;
+  }
+  .qm-print-btn {
+    background: #0B1C2C; color: #E4B84A;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; letter-spacing: 2px;
+    border: none; border-radius: 8px;
+    padding: 12px 24px; cursor: pointer;
+    margin-top: 16px; width: 100%;
+  }
+  .qm-footer {
+    background: #0B1C2C; padding: 20px 40px;
+    color: #8DA0B3; font-size: 11px; text-align: center; letter-spacing: 1px;
+  }
+  .info-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(201,151,43,0.08);
+    border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px;
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 16px; width: 100%;
+  }
+  .info-badge strong { color: var(--gold); }
+
+  .platform-row { background: rgba(61,170,110,0.05); border: 1px solid rgba(61,170,110,0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+  .platform-title { font-size: 11px; color: var(--success); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+
+  @media print {
+    .qm-close-btn, .qm-print-btn { display: none; }
+  }
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .quote-panel { width: 100%; min-width: auto; height: auto; position: static; border-left: none; border-top: 1px solid var(--border); }
+    .form-panel { max-width: 100%; }
+    .tab { font-size: 13px; padding: 14px 16px; }
+    .header { flex-direction: column; gap: 12px; }
+    .row-2, .row-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon">HH</div>
+    <div>
+      <div class="brand-name">Handled Home Service Pro</div>
+      <div class="brand-sub">Drywall & Painting — Houston, TX</div>
+    </div>
+  </div>
+  <div class="header-badge">
+    <strong>832.425.7067</strong>
+    Licensed · Insured · Houston, TX
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('drywall')">Drywall Installation</div>
+  <div class="tab" onclick="switchTab('finishing')">Finishing & Texture</div>
+  <div class="tab" onclick="switchTab('repair')">Repair</div>
+  <div class="tab" onclick="switchTab('painting')">Painting</div>
+  <div class="tab" onclick="switchTab('client')">Client Info</div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+  <div class="form-panel">
+
+    <!-- CLIENT INFO PAGE -->
+    <div class="page" id="page-client">
+      <div class="section">
+        <div class="section-title">Client Information</div>
+        <div class="row-2">
+          <div class="field"><label>Client Name</label><input type="text" id="clientName" placeholder="Full name" oninput="update()"></div>
+          <div class="field"><label>Phone Number</label><input type="text" id="clientPhone" placeholder="(832) 000-0000" oninput="update()"></div>
+        </div>
+        <div class="field"><label>Job Address</label><input type="text" id="clientAddress" placeholder="Street address, Houston TX" oninput="update()"></div>
+        <div class="row-2">
+          <div class="field"><label>Job Type</label>
+            <select id="jobType" onchange="update()">
+              <option value="residential">Residential</option>
+              <option value="investment">Investment Property</option>
+              <option value="commercial">Commercial</option>
+              <option value="new_construction">New Construction</option>
+              <option value="insurance">Insurance Restoration</option>
+            </select>
+          </div>
+          <div class="field"><label>Lead Source</label>
+            <select id="leadSource" onchange="update()">
+              <option value="direct">Direct / Referral</option>
+              <option value="thumbtack">Thumbtack</option>
+              <option value="angi">Angi / HomeAdvisor</option>
+              <option value="google">Google</option>
+              <option value="repeat">Repeat Client</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Notes / Scope Summary</label><input type="text" id="jobNotes" placeholder="Brief description of the job" oninput="update()"></div>
+      </div>
+    </div>
+
+    <!-- DRYWALL PAGE -->
+    <div class="page active" id="page-drywall">
+      <div class="info-badge">
+        <span>💡 Enter all variables below. The quote panel updates in real time.</span>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Drywall Installation</div>
+
+        <div class="row-2">
+          <div class="field"><label>Total Square Footage</label>
+            <input type="number" id="drywallSqft" placeholder="e.g. 800" oninput="update()">
+          </div>
+          <div class="field"><label>Installation Type</label>
+            <select id="installType" onchange="update()">
+              <option value="new_construction">New Construction</option>
+              <option value="remodel">Remodel</option>
+              <option value="addition">Addition</option>
+              <option value="garage_conversion">Garage Conversion</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field"><label>Drywall Thickness</label>
+            <select id="thickness" onchange="update()">
+              <option value="0.25">1/4" — Curved Walls</option>
+              <option value="0.375">3/8" — Remodel</option>
+              <option value="0.5" selected>1/2" — Standard</option>
+              <option value="0.625">5/8" — Fire Rated / Ceilings</option>
+            </select>
+          </div>
+          <div class="field"><label>Board Size</label>
+            <select id="boardSize" onchange="update()">
+              <option value="32">4x8 (32 sq ft)</option>
+              <option value="40">4x10 (40 sq ft)</option>
+              <option value="48">4x12 (48 sq ft)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field"><label>Layers Required</label>
+            <select id="layers" onchange="update()">
+              <option value="1">Single Layer (Standard)</option>
+              <option value="2">Double Layer (Sound/Fire)</option>
+            </select>
+          </div>
+          <div class="field"><label>Number of Openings</label>
+            <input type="number" id="openings" placeholder="Doors, windows, boxes" oninput="update()" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="row-3">
+          <div class="field"><label>Inside Corners</label>
+            <input type="number" id="insideCorners" placeholder="0" oninput="update()" min="0" value="0">
+          </div>
+          <div class="field"><label>Outside Corners</label>
+            <input type="number" id="outsideCorners" placeholder="0" oninput="update()" min="0" value="0">
+          </div>
+          <div class="field"><label>Outside Corner Height (ft)</label>
+            <input type="number" id="cornerHeight" placeholder="8" oninput="update()" min="0" value="8">
+          </div>
+        </div>
+
+        <div class="field"><label>Linear Feet of Metal Framing <span class="tag tag-add">Optional</span></label>
+          <input type="number" id="framingLf" placeholder="0 if not in scope" oninput="update()" min="0" value="0">
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Ceiling Installation <span>Adds 25% labor premium</span></div>
+          <label class="toggle"><input type="checkbox" id="ceilingInstall" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Vapor Barrier Required <span>Bathrooms, basements, exterior walls</span></div>
+          <label class="toggle"><input type="checkbox" id="vaporBarrier" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINISHING PAGE -->
+    <div class="page" id="page-finishing">
+      <div class="section">
+        <div class="section-title">Finishing Level</div>
+
+        <div class="field"><label>Finishing Level</label>
+          <select id="finishLevel" onchange="update()">
+            <option value="0">Level 1 — Tape Only (Hidden Areas)</option>
+            <option value="1">Level 2 — Tape + 1 Coat (Wet Areas Behind Tile)</option>
+            <option value="2">Level 3 — Tape + 2 Coats (Textured Walls)</option>
+            <option value="3" selected>Level 4 — Tape + 3 Coats (Flat Paint)</option>
+            <option value="4">Level 5 — Skim Coat (Highest Quality Smooth)</option>
+          </select>
+        </div>
+
+        <div class="field"><label>Finishing Square Footage</label>
+          <input type="number" id="finishSqft" placeholder="Usually same as install sqft" oninput="update()">
+        </div>
+
+        <div class="field"><label>Texture Type</label>
+          <select id="textureType" onchange="update()">
+            <option value="none">None / Smooth</option>
+            <option value="orange_peel">Orange Peel</option>
+            <option value="knockdown">Knockdown</option>
+            <option value="skip_trowel">Skip Trowel</option>
+            <option value="popcorn">Popcorn (New)</option>
+            <option value="santa_fe">Santa Fe</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Popcorn Ceiling Removal <span>+$1.50–$2.50/sqft — requires lead/asbestos check on pre-1980 homes</span></div>
+          <label class="toggle"><input type="checkbox" id="popcornRemoval" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Skim Coat Over Existing Walls <span>Full surface skim coat</span></div>
+          <label class="toggle"><input type="checkbox" id="skimCoat" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPAIR PAGE -->
+    <div class="page" id="page-repair">
+      <div class="section">
+        <div class="section-title">Drywall Repair</div>
+
+        <div class="row-2">
+          <div class="field"><label>Repair Type</label>
+            <select id="repairType" onchange="update()">
+              <option value="nail">Nail Holes / Minor Touch-Ups</option>
+              <option value="small">Small Patch (&lt;6 inches)</option>
+              <option value="medium">Medium Patch (6–12 inches)</option>
+              <option value="large">Large Patch (&gt;12 inches)</option>
+              <option value="sheet">Full Sheet Replacement</option>
+              <option value="water">Water Damage Repair</option>
+            </select>
+          </div>
+          <div class="field"><label>Number of Repair Locations</label>
+            <input type="number" id="repairCount" placeholder="1" oninput="update()" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="field"><label>Cause of Damage</label>
+          <select id="damageCause" onchange="update()">
+            <option value="impact">Impact</option>
+            <option value="water">Water</option>
+            <option value="settling">Settling Cracks</option>
+            <option value="mold">Mold</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Existing Texture to Match <span>Adds $75–$150 per location</span></div>
+          <label class="toggle"><input type="checkbox" id="textureMatch" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Paint to Match After Repair <span>Spot painting included</span></div>
+          <label class="toggle"><input type="checkbox" id="paintMatch" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+
+        <div id="mold-warning" style="display:none; background: rgba(201,64,64,0.1); border: 1px solid rgba(201,64,64,0.3); border-radius: 8px; padding: 12px 16px; margin-top: 8px; font-size: 12px; color: #E88;">
+          ⚠️ <strong>Mold Damage Detected:</strong> Per your business rules, photograph all existing conditions before work begins. Mold remediation prep may require additional quote. Inform client in writing before proceeding.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINTING PAGE -->
+    <div class="page" id="page-painting">
+      <div class="section">
+        <div class="section-title">Painting</div>
+
+        <div class="row-2">
+          <div class="field"><label>Total Square Footage (Home)</label>
+            <input type="number" id="paintSqft" placeholder="e.g. 1500" oninput="update()">
+          </div>
+          <div class="field"><label>Number of Stories</label>
+            <select id="stories" onchange="update()">
+              <option value="1">1 Story</option>
+              <option value="2">2 Story</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field"><label>Ceiling Height</label>
+            <select id="ceilHeight" onchange="update()">
+              <option value="1.0">Standard 8–9 ft (×1.0)</option>
+              <option value="1.15">High 10–14 ft (×1.15)</option>
+            </select>
+          </div>
+          <div class="field"><label>Number of Rooms</label>
+            <input type="number" id="numRooms" placeholder="e.g. 4" oninput="update()" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="field"><label>Scope of Work</label>
+          <select id="paintScope" onchange="update()">
+            <option value="walls">Walls Only</option>
+            <option value="walls_ceilings">Walls + Ceilings</option>
+            <option value="full_interior">Full Interior</option>
+            <option value="exterior">Exterior Only</option>
+            <option value="full">Full Interior + Exterior</option>
+          </select>
+        </div>
+
+        <div class="row-2">
+          <div class="field"><label>Paint Finish</label>
+            <select id="paintFinish" onchange="update()">
+              <option value="flat">Flat</option>
+              <option value="eggshell" selected>Eggshell</option>
+              <option value="satin">Satin</option>
+              <option value="semi_gloss">Semi-Gloss</option>
+              <option value="high_gloss">High-Gloss</option>
+            </select>
+          </div>
+          <div class="field"><label>Wall Condition</label>
+            <select id="wallCondition" onchange="update()">
+              <option value="new">New Construction</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair — Minor Repairs</option>
+              <option value="poor">Poor — Major Repairs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field"><label>Number of Doors</label>
+            <input type="number" id="numDoors" placeholder="0" oninput="update()" min="0" value="0">
+          </div>
+          <div class="field"><label>Number of Windows</label>
+            <input type="number" id="numWindows" placeholder="0" oninput="update()" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Specialty Finish (Limewash, Accent Wall) <span>+20% premium</span></div>
+          <label class="toggle"><input type="checkbox" id="specialtyFinish" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-label">Furniture Moving Required <span>Adds $150 flat</span></div>
+          <label class="toggle"><input type="checkbox" id="furnitureMove" onchange="update()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end form-panel -->
+
+  <!-- QUOTE PANEL -->
+  <div class="quote-panel">
+    <div class="quote-title">Live Quote</div>
+    <div class="quote-subtitle">Updates as you enter details</div>
+
+    <div id="quote-lines"></div>
+
+    <div class="quote-total">
+      <div class="qt-label">Total Project Investment</div>
+      <div class="qt-amount" id="total-display">$0</div>
+      <div class="qt-range" id="range-display">Enter job details above</div>
+    </div>
+
+    <div class="payment-split">
+      <div class="pay-box">
+        <div class="pb-label">Deposit (50%)</div>
+        <div class="pb-amount" id="deposit-display">$0</div>
+      </div>
+      <div class="pay-box">
+        <div class="pb-label">Balance Due</div>
+        <div class="pb-amount" id="balance-display">$0</div>
+      </div>
+    </div>
+
+    <button class="generate-btn" onclick="generateQuote()">GENERATE FULL QUOTE</button>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset Calculator</button>
+  </div>
+</div>
+
+<!-- QUOTE MODAL -->
+<div class="quote-modal-overlay" id="quoteModal">
+  <button class="qm-close-btn" onclick="closeModal()">✕ CLOSE</button>
+  <div class="quote-modal" id="quoteContent"></div>
+</div>
+
+<script>
+// ==================== STATE ====================
+function val(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  if (el.type === 'checkbox') return el.checked;
+  if (el.type === 'number') return parseFloat(el.value) || 0;
+  return el.value;
+}
+
+function fmt(n) {
+  if (!n) return '$0';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+}
+
+function resetAll() {
+  document.querySelectorAll('input[type=number]').forEach(i => i.value = i.placeholder || 0);
+  document.querySelectorAll('input[type=text]').forEach(i => i.value = '');
+  document.querySelectorAll('input[type=checkbox]').forEach(i => i.checked = false);
+  document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+  update();
+}
+
+// ==================== CALC ENGINE ====================
+let lastCalc = {};
+
+function calcDrywall() {
+  const sqft = val('drywallSqft');
+  if (!sqft) return {};
+
+  // Base rate: hung only $1.75 mid (range $1.50-$2.00)
+  let baseRate = 1.75;
+  const thickness = val('thickness');
+  if (thickness == 0.625) baseRate += 0.25; // 5/8" premium
+  if (thickness == 0.25) baseRate += 0.15;  // curved walls
+
+  let laborMultiplier = 1.0;
+  if (val('ceilingInstall')) laborMultiplier += 0.25;
+  if (val('layers') == 2) laborMultiplier += 0.80; // double layer
+
+  const effectiveSqft = sqft * laborMultiplier;
+  const hangCost = effectiveSqft * baseRate;
+
+  // Boards needed
+  const boardSize = val('boardSize') || 32;
+  const wasteFactor = 1.10;
+  const boardsNeeded = Math.ceil((sqft * val('layers') * wasteFactor) / boardSize);
+
+  // Material cost per sheet estimate
+  const sheetPrice = thickness == 0.625 ? 17 : thickness == 0.25 ? 14 : 13;
+  const materialCost = boardsNeeded * sheetPrice;
+
+  // Openings labor
+  const openingsCost = val('openings') * 35;
+
+  // Corner bead: outside corners × height × $2.50/lf mid
+  const cornerBeadLf = val('outsideCorners') * val('cornerHeight');
+  const cornerBeadCost = cornerBeadLf * 2.50;
+
+  // Framing
+  const framingCost = val('framingLf') * 5.00; // $5/lf mid
+
+  // Vapor barrier
+  const vaporCost = val('vaporBarrier') ? sqft * 0.625 : 0;
+
+  const subtotal = hangCost + materialCost + openingsCost + cornerBeadCost + framingCost + vaporCost;
+
+  return {
+    sqft, hangCost, materialCost, openingsCost, cornerBeadCost,
+    framingCost, vaporCost, boardsNeeded, subtotal,
+    label: 'Drywall Installation'
+  };
+}
+
+function calcFinishing() {
+  const sqft = val('finishSqft') || val('drywallSqft');
+  if (!sqft) return {};
+
+  const finishLevel = parseInt(val('finishLevel'));
+  const finishRates = [0, 0.875, 1.35, 1.75, 2.50]; // L1-L5
+  const finishCost = sqft * (finishRates[finishLevel] || 1.75);
+
+  const textureRates = { none: 0, orange_peel: 1.00, knockdown: 1.25, skip_trowel: 1.75, popcorn: 1.00, santa_fe: 1.50 };
+  const textureCost = sqft * (textureRates[val('textureType')] || 0);
+
+  const popcornCost = val('popcornRemoval') ? sqft * 2.00 : 0;
+  const skimCost = val('skimCoat') ? sqft * 2.50 : 0;
+
+  const subtotal = finishCost + textureCost + popcornCost + skimCost;
+  return { sqft, finishCost, textureCost, popcornCost, skimCost, subtotal, label: 'Drywall Finishing' };
+}
+
+function calcRepair() {
+  const count = val('repairCount');
+  if (!count) return {};
+
+  const baseRates = { nail: 112.50, small: 200, medium: 325, large: 500, sheet: 425, water: 700 };
+  const base = baseRates[val('repairType')] || 200;
+  const texMatchCost = val('textureMatch') ? count * 112.50 : 0;
+  const paintMatchCost = val('paintMatch') ? count * 75 : 0;
+  const moldPremium = val('damageCause') === 'mold' ? count * 150 : 0;
+
+  const subtotal = (base * count) + texMatchCost + paintMatchCost + moldPremium;
+  return { count, base, texMatchCost, paintMatchCost, moldPremium, subtotal, label: 'Drywall Repair' };
+}
+
+function calcPainting() {
+  const sqft = val('paintSqft');
+  if (!sqft) return {};
+
+  const heightMult = parseFloat(val('ceilHeight')) || 1.0;
+  const effSqft = sqft * heightMult;
+
+  const scopeRates = { walls: 1.75, walls_ceilings: 2.10, full_interior: 2.25, exterior: 2.125, full: 3.80 };
+  let rate = scopeRates[val('paintScope')] || 1.75;
+
+  const conditionAdj = { new: 0, good: 0, fair: 0.20, poor: 0.50 };
+  rate += conditionAdj[val('wallCondition')] || 0;
+
+  const finishAdj = { flat: 0, eggshell: 0, satin: 0.10, semi_gloss: 0.15, high_gloss: 0.25 };
+  rate += finishAdj[val('paintFinish')] || 0;
+
+  let laborCost = effSqft * rate;
+  const materialCost = (sqft / 1000) * 450;
+
+  // Doors & windows trim
+  const trimCost = (val('numDoors') * 45) + (val('numWindows') * 35);
+
+  const specialtyAdd = val('specialtyFinish') ? laborCost * 0.20 : 0;
+  const furnitureCost = val('furnitureMove') ? 150 : 0;
+
+  const subtotal = laborCost + materialCost + trimCost + specialtyAdd + furnitureCost;
+  return { sqft, effSqft, laborCost, materialCost, trimCost, specialtyAdd, furnitureCost, subtotal, label: 'Painting' };
+}
+
+function update() {
+  const dw = calcDrywall();
+  const fin = calcFinishing();
+  const rep = calcRepair();
+  const paint = calcPainting();
+
+  // Mold warning
+  document.getElementById('mold-warning').style.display =
+    val('damageCause') === 'mold' ? 'block' : 'none';
+
+  // Lead source platform fee
+  const isPlatform = ['thumbtack','angi'].includes(val('leadSource'));
+  const platformFee = isPlatform ? 70 : 0;
+  const mobilizationFee = 50;
+
+  const rawTotal = (dw.subtotal || 0) + (fin.subtotal || 0) + (rep.subtotal || 0) + (paint.subtotal || 0) + mobilizationFee + platformFee;
+
+  // Profit margin 40% on top of costs
+  const profitMargin = 0.40;
+  const totalWithMargin = rawTotal / (1 - profitMargin);
+  const total = Math.round(totalWithMargin / 5) * 5; // round to nearest $5
+
+  lastCalc = { dw, fin, rep, paint, platformFee, mobilizationFee, rawTotal, total, isPlatform };
+
+  // Build quote lines
+  let lines = '';
+  const addLine = (label, value, highlight) => {
+    if (!value) return;
+    lines += `<div class="quote-line ${highlight ? 'highlight' : ''}">
+      <span class="ql">${label}</span>
+      <span class="qv">${fmt(value)}</span>
+    </div>`;
+  };
+
+  if (dw.subtotal) {
+    lines += `<div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;font-weight:600;">DRYWALL INSTALLATION</div>`;
+    addLine(`Hang (${dw.sqft} sqft)`, dw.hangCost);
+    addLine(`Materials (${dw.boardsNeeded} sheets)`, dw.materialCost);
+    if (dw.openingsCost) addLine('Openings / Cuts', dw.openingsCost);
+    if (dw.cornerBeadCost) addLine('Corner Bead', dw.cornerBeadCost);
+    if (dw.framingCost) addLine('Metal Framing', dw.framingCost);
+    if (dw.vaporCost) addLine('Vapor Barrier', dw.vaporCost);
+  }
+  if (fin.subtotal) {
+    lines += `<div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;font-weight:600;">FINISHING & TEXTURE</div>`;
+    addLine('Finishing Labor', fin.finishCost);
+    if (fin.textureCost) addLine('Texture Application', fin.textureCost);
+    if (fin.popcornCost) addLine('Popcorn Removal', fin.popcornCost);
+    if (fin.skimCost) addLine('Skim Coat', fin.skimCost);
+  }
+  if (rep.subtotal) {
+    lines += `<div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;font-weight:600;">REPAIR</div>`;
+    addLine(`Repair (${rep.count}x)`, rep.base * rep.count);
+    if (rep.texMatchCost) addLine('Texture Matching', rep.texMatchCost);
+    if (rep.paintMatchCost) addLine('Paint Match', rep.paintMatchCost);
+    if (rep.moldPremium) addLine('Mold Scope Premium', rep.moldPremium);
+  }
+  if (paint.subtotal) {
+    lines += `<div style="font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;font-weight:600;">PAINTING</div>`;
+    addLine(`Labor (${paint.effSqft.toFixed(0)} eff. sqft)`, paint.laborCost);
+    addLine('Paint Materials', paint.materialCost);
+    if (paint.trimCost) addLine('Doors & Windows Trim', paint.trimCost);
+    if (paint.specialtyAdd) addLine('Specialty Finish', paint.specialtyAdd);
+    if (paint.furnitureCost) addLine('Furniture Moving', paint.furnitureCost);
+  }
+
+  if (rawTotal > 0) {
+    lines += `<div class="quote-divider"></div>`;
+    addLine('Mobilization Fee', mobilizationFee);
+    if (isPlatform) addLine('Platform Fee (Thumbtack/Angi)', platformFee);
+    lines += `<div class="quote-divider"></div>`;
+    addLine('Subtotal (Before Margin)', rawTotal);
+    addLine('Profit Margin (40%)', total - rawTotal, true);
+  }
+
+  document.getElementById('quote-lines').innerHTML = lines;
+  document.getElementById('total-display').textContent = fmt(total);
+  document.getElementById('deposit-display').textContent = fmt(Math.round(total * 0.5 / 5) * 5);
+  document.getElementById('balance-display').textContent = fmt(Math.round(total * 0.5 / 5) * 5);
+
+  const low = fmt(Math.round(total * 0.95 / 5) * 5);
+  const high = fmt(Math.round(total * 1.05 / 5) * 5);
+  document.getElementById('range-display').textContent = total > 0 ? `Estimate range: ${low} – ${high}` : 'Enter job details above';
+}
+
+// ==================== QUOTE GENERATOR ====================
+function generateQuote() {
+  const total = lastCalc.total || 0;
+  if (total === 0) { alert('Please enter job details before generating a quote.'); return; }
+
+  const today = new Date();
+  const validThru = new Date(today); validThru.setDate(validThru.getDate() + 30);
+  const fmt2 = d => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const quoteNum = 'HHS-' + today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0') + '-' + Math.floor(Math.random()*900+100);
+
+  const clientName = val('clientName') || 'Valued Client';
+  const clientAddr = val('clientAddress') || 'Houston, TX';
+  const clientPhone = val('clientPhone') || '';
+  const jobNotes = val('jobNotes') || '';
+  const deposit = Math.round(total * 0.5 / 5) * 5;
+
+  function row(desc, qty, unit, price, total2) {
+    return `<tr><td>${desc}</td><td style="text-align:center">${qty}</td><td style="text-align:center">${unit}</td><td style="text-align:right">$${price.toLocaleString()}</td><td style="text-align:right">$${Math.round(total2).toLocaleString()}</td></tr>`;
+  }
+
+  let tableRows = '';
+  const { dw, fin, rep, paint, platformFee, mobilizationFee } = lastCalc;
+
+  if (dw && dw.subtotal) {
+    tableRows += `<tr><td colspan="5" style="background:#f0e8d4;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#0B1C2C;">DRYWALL INSTALLATION</td></tr>`;
+    tableRows += row('Surface Preparation & Protection', dw.sqft, 'sqft', (dw.hangCost/dw.sqft).toFixed(2), dw.hangCost);
+    tableRows += row(`USG Sheetrock Materials (${dw.boardsNeeded} sheets)`, dw.boardsNeeded, 'sheets', (dw.materialCost/dw.boardsNeeded).toFixed(2), dw.materialCost);
+    if (dw.openingsCost) tableRows += row('Openings — Cuts & Fitting', val('openings'), 'ea', 35, dw.openingsCost);
+    if (dw.cornerBeadCost) tableRows += row('Corner Bead Installation', (val('outsideCorners')*val('cornerHeight')).toFixed(0), 'lf', 2.50, dw.cornerBeadCost);
+    if (dw.framingCost) tableRows += row('Metal Framing & Studs', val('framingLf'), 'lf', 5.00, dw.framingCost);
+    if (dw.vaporCost) tableRows += row('Vapor Barrier Installation', dw.sqft, 'sqft', 0.625, dw.vaporCost);
+  }
+  if (fin && fin.subtotal) {
+    tableRows += `<tr><td colspan="5" style="background:#f0e8d4;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#0B1C2C;">FINISHING & TEXTURE</td></tr>`;
+    const finishNames = ['Level 1 — Tape Only','Level 2 — Tape + 1 Coat','Level 3 — Tape + 2 Coats','Level 4 — Tape + 3 Coats','Level 5 — Skim Coat'];
+    tableRows += row(finishNames[parseInt(val('finishLevel'))] + ' Finish', fin.sqft, 'sqft', (fin.finishCost/fin.sqft).toFixed(2), fin.finishCost);
+    if (fin.textureCost) tableRows += row('Texture Application', fin.sqft, 'sqft', (fin.textureCost/fin.sqft).toFixed(2), fin.textureCost);
+    if (fin.popcornCost) tableRows += row('Popcorn Ceiling Removal', fin.sqft, 'sqft', 2.00, fin.popcornCost);
+    if (fin.skimCost) tableRows += row('Skim Coat — Existing Walls', fin.sqft, 'sqft', 2.50, fin.skimCost);
+  }
+  if (rep && rep.subtotal) {
+    tableRows += `<tr><td colspan="5" style="background:#f0e8d4;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#0B1C2C;">DRYWALL REPAIR</td></tr>`;
+    const repNames = {nail:'Nail Holes / Touch-Ups',small:'Small Patch (<6")',medium:'Medium Patch (6–12")',large:'Large Patch (>12")',sheet:'Full Sheet Replacement',water:'Water Damage Repair'};
+    tableRows += row(repNames[val('repairType')], rep.count, 'loc', rep.base, rep.base * rep.count);
+    if (rep.texMatchCost) tableRows += row('Texture Matching', rep.count, 'loc', 112.50, rep.texMatchCost);
+    if (rep.paintMatchCost) tableRows += row('Paint Matching After Repair', rep.count, 'loc', 75, rep.paintMatchCost);
+    if (rep.moldPremium) tableRows += row('Mold Scope / Remediation Prep', rep.count, 'loc', 150, rep.moldPremium);
+  }
+  if (paint && paint.subtotal) {
+    tableRows += `<tr><td colspan="5" style="background:#f0e8d4;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#0B1C2C;">PAINTING</td></tr>`;
+    const scopeLabels = {walls:'Walls Only',walls_ceilings:'Walls + Ceilings',full_interior:'Full Interior',exterior:'Exterior',full:'Full Interior + Exterior'};
+    tableRows += row('Sherwin-Williams Paint — Labor', paint.effSqft.toFixed(0), 'sqft', (paint.laborCost/paint.effSqft).toFixed(2), paint.laborCost);
+    tableRows += row('Sherwin-Williams Paint — Materials', paint.sqft, 'sqft', (paint.materialCost/paint.sqft).toFixed(2), paint.materialCost);
+    if (paint.trimCost) tableRows += row('Doors & Windows — Trim Work', val('numDoors')+val('numWindows'), 'ea', '-', paint.trimCost);
+    if (paint.specialtyAdd) tableRows += row('Specialty Finish Premium', 1, 'lot', paint.specialtyAdd.toFixed(0), paint.specialtyAdd);
+    if (paint.furnitureCost) tableRows += row('Furniture Moving Service', 1, 'lot', 150, 150);
+  }
+  tableRows += `<tr><td colspan="5" style="background:#f0e8d4;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#0B1C2C;">FEES</td></tr>`;
+  tableRows += row('Mobilization Fee', 1, 'job', 50, 50);
+  if (platformFee) tableRows += row('Platform Fee', 1, 'job', 70, 70);
+  tableRows += `<tr class="qm-total-row"><td colspan="4" style="text-align:right;font-size:16px;">TOTAL PROJECT INVESTMENT</td><td style="text-align:right;font-size:18px;color:#C9972B;">$${Math.round(total).toLocaleString()}</td></tr>`;
+
+  const html = `
+  <div class="qm-header">
+    <div>
+      <div class="qm-brand-name">Handled Home Service Pro</div>
+      <div class="qm-brand-sub">Licensed · Insured · State Registered · Houston, TX</div>
+      <div style="margin-top:12px;font-size:12px;color:#8DA0B3;">
+        📞 832.425.7067<br>
+        Houston, Texas
+      </div>
+    </div>
+    <div class="qm-contact">
+      <strong>QUOTE #${quoteNum}</strong><br>
+      Date: ${fmt2(today)}<br>
+      Valid Through: ${fmt2(validThru)}<br><br>
+      <strong>Prepared For:</strong><br>
+      ${clientName}<br>
+      ${clientAddr}<br>
+      ${clientPhone}
+    </div>
+  </div>
+  <div class="qm-body">
+    <div class="qm-quote-meta">
+      <div class="qm-meta-block">
+        <div class="qm-meta-label">Project Type</div>
+        <div class="qm-meta-value">${val('jobType') || 'Residential'}</div>
+      </div>
+      <div class="qm-meta-block">
+        <div class="qm-meta-label">Estimated Duration</div>
+        <div class="qm-meta-value">${total < 2000 ? '1–2 Days' : total < 5000 ? '2–4 Days' : total < 10000 ? '4–7 Days' : '1–2 Weeks'}</div>
+      </div>
+      ${jobNotes ? `<div class="qm-meta-block" style="grid-column:1/-1"><div class="qm-meta-label">Scope Notes</div><div class="qm-meta-value">${jobNotes}</div></div>` : ''}
+    </div>
+
+    <div class="qm-divider"></div>
+    <div class="qm-section-title">SCOPE OF WORK & PRICING</div>
+    <table class="qm-table">
+      <thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Total</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+
+    <div class="qm-payment-grid">
+      <div class="qm-pay-box">
+        <div class="qm-pay-label">Deposit Required (50%) — Due Before Work Begins</div>
+        <div class="qm-pay-amount">$${deposit.toLocaleString()}</div>
+      </div>
+      <div class="qm-pay-box">
+        <div class="qm-pay-label">Balance Due — Upon Satisfactory Completion</div>
+        <div class="qm-pay-amount">$${(total-deposit).toLocaleString()}</div>
+      </div>
+    </div>
+
+    <div class="qm-disclaimer">
+      <strong>⚠️ DISCLAIMER:</strong> This is an estimate based on information provided during initial consultation. Final pricing is subject to confirmation during in-person walkthrough. Any hidden damage discovered during work — including water damage, mold, structural issues, or deteriorated framing — is outside the scope of this quote and will be documented, photographed, and quoted separately before work proceeds. Work will not commence until a 50% deposit has been received. Handled Home Service Pro will never begin work with open water damage or mold without written client acknowledgment.
+    </div>
+
+    <div class="qm-sig">
+      <div class="sig-line">Authorized by: Handled Home Service Pro<br><br>_________________________________<br>Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div>
+      <div class="sig-line">Accepted by: Client<br><br>_________________________________<br>Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date</div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="qm-page-break">
+      <div class="qm-divider"></div>
+      <div class="qm-section-title">OUR PREMIUM SERVICE COMMITMENT</div>
+      <div class="qm-info-section">
+        <div class="qm-info-title">Why Handled Home Service Pro</div>
+        <ul class="qm-info-list">
+          <li>Fully licensed, state-registered, and insured in the state of Texas</li>
+          <li>USG Sheetrock® used exclusively — the industry gold standard for drywall</li>
+          <li>Sherwin-Williams paint exclusively — superior coverage, lifetime warranty finishes available</li>
+          <li>Level 4 and Level 5 finishing specialists — the premium tier most contractors skip</li>
+          <li>Texture matching expertise — we match existing textures precisely, not approximately</li>
+          <li>Daily jobsite communication — you always know what stage we are at</li>
+          <li>Clean worksite maintained throughout — dust containment and daily cleanup included</li>
+          <li>1-Year Workmanship Warranty on all completed work</li>
+          <li>Photography of all existing conditions before work begins — you are fully protected</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="qm-page-break">
+      <div class="qm-divider"></div>
+      <div class="qm-section-title">DRYWALL & PAINT GUIDE</div>
+      <div class="qm-info-section">
+        <div class="qm-info-title">Drywall Finishing Levels — What They Mean for You</div>
+        <ul class="qm-info-list">
+          <li><strong>Level 1:</strong> Tape only, no finishing — hidden areas like attics and mechanical rooms only</li>
+          <li><strong>Level 2:</strong> Tape + 1 coat — wet areas behind tile, garages — not suitable for paint</li>
+          <li><strong>Level 3:</strong> Tape + 2 coats — used under heavy texture — not suitable for flat or sheen paints</li>
+          <li><strong>Level 4:</strong> Tape + 3 coats — standard for residential painting — recommended for most projects</li>
+          <li><strong>Level 5:</strong> Full skim coat — showroom quality — ideal for gloss paints and luxury finishes</li>
+        </ul>
+      </div>
+      <div class="qm-info-section">
+        <div class="qm-info-title">Paint Finish Guide — Right Finish for Every Room</div>
+        <ul class="qm-info-list">
+          <li><strong>Flat:</strong> Ceilings, low-traffic walls — hides imperfections, not washable</li>
+          <li><strong>Eggshell:</strong> Living rooms, bedrooms — slight sheen, easy to clean — most popular</li>
+          <li><strong>Satin:</strong> Hallways, kids rooms — durable, washable, slight luster</li>
+          <li><strong>Semi-Gloss:</strong> Kitchens, bathrooms, trim — moisture resistant, very washable</li>
+          <li><strong>High-Gloss:</strong> Doors, cabinets, accent surfaces — maximum sheen and durability</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="qm-page-break">
+      <div class="qm-divider"></div>
+      <div class="qm-section-title">OUR PROCESS — START TO FINISH</div>
+      <div class="qm-info-section">
+        <div class="qm-info-title">Step by Step</div>
+        <ul class="qm-info-list">
+          <li><strong>Step 1 — Pre-Job Walkthrough:</strong> In-person site visit, confirm scope, photograph all conditions</li>
+          <li><strong>Step 2 — Deposit Received:</strong> 50% deposit confirms your project date on our schedule</li>
+          <li><strong>Step 3 — Material Procurement:</strong> All materials sourced from approved Houston suppliers (USG, Sherwin-Williams)</li>
+          <li><strong>Step 4 — Site Protection:</strong> Floors, furniture, and adjacent surfaces protected before any work begins</li>
+          <li><strong>Step 5 — Framing Confirmation:</strong> All electrical rough-in and framing confirmed complete before drywall begins</li>
+          <li><strong>Step 6 — Drywall Installation:</strong> Hang, tape, mud — multiple coats with proper dry time between each</li>
+          <li><strong>Step 7 — Finishing & Texture:</strong> Sanded to specified level, texture applied as agreed</li>
+          <li><strong>Step 8 — Painting:</strong> Primed, painted to spec — Sherwin-Williams materials only</li>
+          <li><strong>Step 9 — Final Walkthrough:</strong> Walk with client before collecting balance — zero punch list policy</li>
+          <li><strong>Step 10 — 1-Year Warranty Active:</strong> Written workmanship warranty provided at job close</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="qm-page-break">
+      <div class="qm-divider"></div>
+      <div class="qm-section-title">CERTIFICATE OF INSURANCE — STATEMENT</div>
+      <div class="qm-info-section">
+        <div class="qm-info-title">Insurance Coverage</div>
+        <ul class="qm-info-list">
+          <li><strong>Business Name:</strong> Handled Home Service Pro</li>
+          <li><strong>Location:</strong> Houston, Texas</li>
+          <li><strong>General Liability Coverage:</strong> $1,000,000 minimum per occurrence</li>
+          <li><strong>Policy Status:</strong> Active</li>
+          <li>A live Certificate of Insurance (COI) is available upon request for any client, property manager, or general contractor requiring proof of insurance before work begins.</li>
+          <li>Contact us at 832.425.7067 to request your COI — typically provided same business day.</li>
+        </ul>
+      </div>
+      <div style="margin-top:24px;padding:16px;border:2px solid #C9972B;border-radius:8px;text-align:center;font-size:12px;color:#555;">
+        Thank you for choosing <strong style="color:#0B1C2C;">Handled Home Service Pro</strong>. We are committed to delivering premium craftsmanship, professional communication, and a result you are proud of. Questions? Call or text us at <strong style="color:#C9972B;">832.425.7067</strong>.
+      </div>
+    </div>
+
+    <button class="qm-print-btn" onclick="window.print()">🖨 PRINT / SAVE AS PDF</button>
+  </div>
+  <div class="qm-footer">Handled Home Service Pro · Houston, TX · 832.425.7067 · Licensed · Insured · State Registered</div>
+  `;
+
+  document.getElementById('quoteContent').innerHTML = html;
+  document.getElementById('quoteModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('quoteModal').classList.remove('open');
+}
+
+// Init
+update();
+</script>
+</body>
+</html>
